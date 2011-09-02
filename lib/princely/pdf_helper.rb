@@ -27,7 +27,9 @@ module PdfHelper
     # Sets style sheets on PDF renderer
     prince.add_style_sheets(*options[:stylesheets].collect{|style| stylesheet_file_path(style)})
     
-    html_string = render_to_string(:template => options[:template], :layout => options[:layout])
+    #This is a hack to workaround Rails breaking gsub! and friends.  We turn it back into a regular
+    #string since SafeBuffer breaks $1 $2 $3 etc in regular expression matches
+    html_string = String.new(render_to_string(:template => options[:template], :layout => options[:layout]))
     
     # Make all paths relative, on disk paths...
     html_string.gsub!(".com:/",".com/") # strip out bad attachment_fu URLs
